@@ -1,6 +1,7 @@
 import 'package:dynamic_forms_v1/controllers/dashboard_controller.dart';
 import 'package:dynamic_forms_v1/views/assign_forms_view.dart';
 import 'package:dynamic_forms_v1/views/drawer_view.dart';
+import 'package:dynamic_forms_v1/views/submit_forms_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -30,7 +31,7 @@ class DashboardView extends StatelessWidget {
             children: [
               Container(),
               AssignFormsView(),
-              Container(),
+              SubmitFormsView(),
             ],
           ),
           drawer: DrawerView(),

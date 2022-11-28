@@ -2,9 +2,15 @@ import 'package:dynamic_forms_v1/controllers/assign_forms_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class AssignFormsView extends StatelessWidget {
+class AssignFormsView extends StatefulWidget {
   const AssignFormsView({super.key});
 
+  @override
+  State<AssignFormsView> createState() => _AssignFormsViewState();
+}
+
+class _AssignFormsViewState extends State<AssignFormsView> {
+     
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(AssignFormsController());

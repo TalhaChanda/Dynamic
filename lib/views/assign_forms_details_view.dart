@@ -1,10 +1,10 @@
 import 'dart:convert';
-
 import 'package:dynamic_forms_v1/controllers/assign_forms_controller.dart';
 import 'package:dynamic_forms_v1/models/submit_forms_model.dart';
 import 'package:dynamic_forms_v1/services/http_services.dart';
 import 'package:dynamic_forms_v1/widgets/button_widget.dart';
 import 'package:dynamic_forms_v1/widgets/checkbox_widget.dart';
+import 'package:dynamic_forms_v1/widgets/image_picker_widget.dart';
 import 'package:dynamic_forms_v1/widgets/radio_widget.dart';
 import 'package:dynamic_forms_v1/widgets/text_field_widget.dart';
 import 'package:flutter/foundation.dart';
@@ -20,6 +20,7 @@ class AssignFormsDetailsView extends StatefulWidget {
 }
 
 class _AssignFormsDetailsViewState extends State<AssignFormsDetailsView> {
+  String? text;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -48,6 +49,7 @@ class _AssignFormsDetailsViewState extends State<AssignFormsDetailsView> {
                 SizedBox(
                   height: size.height * .02,
                 ),
+                ImagePickerWidget(),
                 Container(
                   width: size.width * .9,
                   child: ListView.builder(
@@ -63,7 +65,6 @@ class _AssignFormsDetailsViewState extends State<AssignFormsDetailsView> {
                             .add(TextEditingController());
                         controller.dateControllerList
                             .add(TextEditingController());
-
                         return Card(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
@@ -431,6 +432,7 @@ class _AssignFormsDetailsViewState extends State<AssignFormsDetailsView> {
                                                                       .toString(),
                                                                 })));
                                                   }
+                                                  print(controller.checkList);
                                                 },
                                               ));
                                         })),
@@ -455,11 +457,14 @@ class _AssignFormsDetailsViewState extends State<AssignFormsDetailsView> {
                                               items: [
                                                 ...(assignForms.questions[index]
                                                         .dropdownValues as List)
-                                                    .map((e) =>
-                                                        DropdownMenuItem(
-                                                            value: e.title,
-                                                            child: Text(e.title
-                                                                .toString())))
+                                                    .map(
+                                                  (e) => DropdownMenuItem(
+                                                    value: e.title,
+                                                    child: Text(
+                                                      e.title.toString(),
+                                                    ),
+                                                  ),
+                                                )
                                               ],
                                               onChanged: (value) {
                                                 assignForms.questions[index]
@@ -488,11 +493,76 @@ class _AssignFormsDetailsViewState extends State<AssignFormsDetailsView> {
                                         ],
                                       );
                                     })),
+                              if (assignForms.questions[index].type ==
+                                  "client_dropdown")
+                                Container(
+                                  width: size.width * .73,
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        height: size.height * .01,
+                                      ),
+                                      Obx(
+                                        () => DropdownButton(
+                                            isExpanded: controller
+                                                    .changeStateClientDrop.value
+                                                ? true
+                                                : true,
+                                            value: assignForms.questions[index]
+                                                .selectedDropdownVal,
+                                            items: [
+                                              ...(controller.assignForms!
+                                                      .clinets as List)
+                                                  .map(
+                                                (e) => DropdownMenuItem(
+                                                  value: e.customerName,
+                                                  child: Text(
+                                                    e.customerName.toString(),
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                            onChanged: (value) {
+                                              assignForms.questions[index]
+                                                      .selectedDropdownVal =
+                                                  value.toString();
+                                              print(value);
+                                              controller.changeStateClientDrop
+                                                      .value =
+                                                  !controller
+                                                      .changeStateClientDrop
+                                                      .value;
+                                              controller.cliList.removeWhere(
+                                                  (element) =>
+                                                      element["id"] ==
+                                                      assignForms
+                                                          .questions[index].id
+                                                          .toString());
+                                              controller.cliList.add({
+                                                "id": assignForms
+                                                    .questions[index].id
+                                                    .toString(),
+                                                "answer": value.toString()
+                                              });
+                                            }),
+                                      ),
+                                      SizedBox(
+                                        height: size.height * .02,
+                                      )
+                                    ],
+                                  ),
+                                ),
                             ],
                           ),
                         );
                       }),
                 ),
+                SizedBox(
+                  height: size.height * .025,
+                ),
+                Obx(() => controller.isPostLoading.value
+                    ? CircularProgressIndicator()
+                    : Text("")),
                 SizedBox(
                   height: size.height * .025,
                 ),
@@ -503,6 +573,7 @@ class _AssignFormsDetailsViewState extends State<AssignFormsDetailsView> {
                       buttonText: "Submit",
                       onPressed: () async {
                         if (controller.globalKey.currentState!.validate()) {
+                          controller.isPostLoading(true);
                           try {
                             controller.globalKey.currentState!.save();
                             var userId = await controller.getUserId();
@@ -514,6 +585,7 @@ class _AssignFormsDetailsViewState extends State<AssignFormsDetailsView> {
                             var radioList = controller.radioList;
                             var checkList = controller.checkList;
                             var dropList = controller.dropList;
+                            var cliList = controller.cliList;
 
                             var allAnswers = jsonEncode(textList +
                                 emailList +
@@ -521,7 +593,8 @@ class _AssignFormsDetailsViewState extends State<AssignFormsDetailsView> {
                                 dateList +
                                 checkList +
                                 radioList +
-                                dropList);
+                                dropList +
+                                cliList);
 
                             var req = SubmitFormsModel(
                               userId: userId.toString(),
@@ -541,6 +614,8 @@ class _AssignFormsDetailsViewState extends State<AssignFormsDetailsView> {
                                 controller.radioList.clear();
                                 controller.checkList.clear();
                                 controller.dropList.clear();
+                                controller.cliList.clear();
+                                setState(() {});
 
                                 showDialog(
                                     context: context,
@@ -554,6 +629,22 @@ class _AssignFormsDetailsViewState extends State<AssignFormsDetailsView> {
                                           actions: [
                                             TextButton(
                                               onPressed: () {
+                                                controller.textControllerList
+                                                    .clear();
+                                                controller.emailControllerList
+                                                    .clear();
+                                                controller.numberControllerList
+                                                    .clear();
+                                                controller.dateControllerList
+                                                    .clear();
+                                                controller.textList.clear();
+                                                controller.emailList.clear();
+                                                controller.numberList.clear();
+                                                controller.dateList.clear();
+                                                controller.radioList.clear();
+                                                controller.checkList.clear();
+                                                controller.dropList.clear();
+                                                controller.cliList.clear();
                                                 Get.back();
                                               },
                                               child: const Text(
@@ -568,7 +659,9 @@ class _AssignFormsDetailsViewState extends State<AssignFormsDetailsView> {
                                 print(res.body);
                               }
                             });
-                          } finally {}
+                          } finally {
+                            controller.isPostLoading(false);
+                          }
                         }
                       },
                     )),

@@ -10,17 +10,19 @@ class AssignFormsModel {
   AssignFormsModel({
     this.forms,
     this.clinets,
+    this.selectedClientDropdownVal,
   });
 
   List<Forms>? forms;
   List<Clinet>? clinets;
+  String? selectedClientDropdownVal;
 
   factory AssignFormsModel.fromJson(Map<String, dynamic> json) =>
       AssignFormsModel(
-        forms: List<Forms>.from(json["Forms"].map((x) => Forms.fromJson(x))),
-        clinets:
-            List<Clinet>.from(json["Clinets"].map((x) => Clinet.fromJson(x))),
-      );
+          forms: List<Forms>.from(json["Forms"].map((x) => Forms.fromJson(x))),
+          clinets:
+              List<Clinet>.from(json["Clinets"].map((x) => Clinet.fromJson(x))),
+          selectedClientDropdownVal: json["Clinets"][0]["customer_name"]);
 
   Map<String, dynamic> toJson() => {
         "Forms": List<dynamic>.from(forms!.map((x) => x.toJson())),
@@ -52,8 +54,6 @@ class Clinet {
   String? cce;
   DateTime? createdAt;
   DateTime? updatedAt;
-  
-
 
   factory Clinet.fromJson(Map<String, dynamic> json) => Clinet(
         id: json["id"],

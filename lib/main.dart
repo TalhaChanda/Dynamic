@@ -1,4 +1,3 @@
-import 'package:dynamic_forms_v1/bindings/assign_forms_controller_binding.dart';
 import 'package:dynamic_forms_v1/bindings/dashboard_controller_binding.dart';
 import 'package:dynamic_forms_v1/bindings/login_controller_binding.dart';
 import 'package:dynamic_forms_v1/bindings/splash_controller_binding.dart';
@@ -6,6 +5,8 @@ import 'package:dynamic_forms_v1/views/assign_forms_details_view.dart';
 import 'package:dynamic_forms_v1/views/dashboard_view.dart';
 import 'package:dynamic_forms_v1/views/login_view.dart';
 import 'package:dynamic_forms_v1/views/splash_view.dart';
+import 'package:dynamic_forms_v1/views/submit_forms_details_answer_view.dart';
+import 'package:dynamic_forms_v1/views/submit_forms_details_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -41,6 +42,14 @@ class MyApp extends StatelessWidget {
          GetPage(
             name: "/AssignFormsDetails",
             page: () => AssignFormsDetailsView(),
+        ),
+        GetPage(
+            name: "/SubmitFormsDetails",
+            page: () => SubmitFormsDetailsView(),
+        ),
+        GetPage(
+            name: "/SubmitFormsDetailsAnswers",
+            page: () => SubmitFormsDetailsAnswers(),
         ),
          
       ],

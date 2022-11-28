@@ -8,6 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AssignFormsController extends GetxController {
   var isLoading = true.obs;
+  var isPostLoading = false.obs;
+
+  
   final globalKey = GlobalKey<FormState>();
   AssignFormsModel? assignForms;
   List<TextEditingController> textControllerList = [];
@@ -16,12 +19,14 @@ class AssignFormsController extends GetxController {
   List<TextEditingController> dateControllerList = [];
   final changeState = false.obs;
   final changeStateDrop = false.obs;
+  final changeStateClientDrop = false.obs;
+
   final changeStateCheck = false.obs;
   final changeStatetext = false.obs;
   final changeStateemail = false.obs;
   final changeStatenumber = false.obs;
   final changeStatedate = false.obs;
-
+  List<String> clientDropList = [];
 
   List<Map<String, String>> textList = [];
   List<Map<String, String>> emailList = [];
@@ -30,6 +35,8 @@ class AssignFormsController extends GetxController {
   List<Map<String, String>> radioList = [];
   List<Map<String, String>> checkList = [];
   List<Map<String, String>> dropList = [];
+  List<Map<String, String>> cliList = [];
+
 
   @override
   void onInit() {
@@ -41,7 +48,6 @@ class AssignFormsController extends GetxController {
     getAssignForms();
     super.onInit();
   }
-  
 
   getUserId() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
